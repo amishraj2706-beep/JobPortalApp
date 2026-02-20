@@ -37,6 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    AUTH_USER_MODEL = 'users.User'
+    'applications',
+    'candidates',
+    'companies',
+    'employers',
+    'jobs',
+    'users',    
+    'messaging',
+    'notifications',
+    'resumes',
+    'saved_jobs',
+    'skills',
+    'users',
+
 ]
 
 MIDDLEWARE = [
