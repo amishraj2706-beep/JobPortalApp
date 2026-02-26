@@ -37,20 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    AUTH_USER_MODEL = 'users.User'
     'applications',
     'candidates',
     'companies',
     'employers',
     'jobs',
-    'users',    
+    'users',
     'messaging',
     'notifications',
     'resumes',
     'saved_jobs',
     'skills',
-    'users',
-
 ]
 
 MIDDLEWARE = [
@@ -63,7 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'jobportel.urls'
+ROOT_URLCONF = 'jobportal.urls'
 
 TEMPLATES = [
     {
@@ -80,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'jobportel.wsgi.application'
+WSGI_APPLICATION = 'jobportal.wsgi.application'
 
 
 # Database
@@ -112,6 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.User'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -129,3 +128,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
