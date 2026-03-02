@@ -29,8 +29,4 @@ class PasswordResetOTP(models.Model):
         ordering = ['-created_at']
 
     def is_expired(self) -> bool:
-        """Check if OTP is expired (10 minutes validity)"""
         return self.created_at < timezone.now() - timedelta(minutes=10)
-
-    def __str__(self):
-        return f"OTP for {self.user.username} - {'Used' if self.is_used else 'Active'}"
