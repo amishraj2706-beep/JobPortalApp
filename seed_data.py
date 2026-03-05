@@ -1,100 +1,104 @@
-from app import app, db, Recruiter, Company, JobPosting, CandidateProfile, Application
-from datetime import date, timedelta
+"""
+seed_data.py
+Run this once to populate the DB with sample data for testing.
+    python seed_data.py
+"""
+from app import create_app
+from models import db
+from models.user_model import User
+from models.employer_model import Employer
+from models.candidate_model import Candidate
+from models.job_model import Job
+from models.resume_model import Resume
+from models.application_model import Application
+
+app = create_app()
 
 with app.app_context():
     db.drop_all()
     db.create_all()
 
-    r = Recruiter(name='Priya Sharma', email='priya@techcorp.com')
-    r.set_password('password123')
-    db.session.add(r)
+    # ── Employer / HR user ────────────────────────────────────────────────────
+    hr_user = User(email='hr@techcorp.com', role='hr')
+    hr_user.set_password('password123')
+    db.session.add(hr_user)
     db.session.flush()
 
-    company = Company(
-        recruiter_id=r.id, name='TechCorp Solutions', industry='Technology',
-        website='https://techcorp.com', company_size='51-200',
-        location='Bangalore, Karnataka',
-        description='We build world-class SaaS products for enterprise clients.'
+    employer = Employer(
+        user_id      = hr_user.id,
+        company_name = 'TechCorp Solutions',
+        industry     = 'Software',
+        location     = 'Bangalore',
     )
-    db.session.add(company)
+    db.session.add(employer)
     db.session.flush()
 
-    job1 = JobPosting(
-        company_id=company.id, recruiter_id=r.id,
-        title='Backend Python Developer',
-        description='We are looking for a skilled Python developer to build REST APIs.',
-        required_skills='Python, Flask, Django, PostgreSQL, REST API, Docker',
-        experience_level='Mid Level', salary_min=600000, salary_max=1200000,
-        employment_type='Full-time', work_mode='Hybrid',
-        application_deadline=date.today() + timedelta(days=30),
-        num_openings=2, status='Active'
+    # ── Job Posting ───────────────────────────────────────────────────────────
+    job = Job(
+        employer_id        = employer.id,
+        title              = 'Python Backend Developer',
+        description        = 'Build REST APIs using Flask and Python.',
+        location           = 'Bangalore',
+        job_type           = 'Full-time',
+        required_skills    = 'Python,Flask,SQL,REST API',
+        required_education = 'Bachelor',
+        min_experience     = 2,
+        is_active          = True,
     )
-    job2 = JobPosting(
-        company_id=company.id, recruiter_id=r.id,
-        title='Frontend React Developer',
-        description='Join our frontend team to build modern, responsive user interfaces.',
-        required_skills='React, JavaScript, TypeScript, CSS, HTML',
-        experience_level='Entry Level', salary_min=400000, salary_max=800000,
-        employment_type='Full-time', work_mode='Remote',
-        application_deadline=date.today() + timedelta(days=20),
-        num_openings=3, status='Active'
-    )
-    job3 = JobPosting(
-        company_id=company.id, recruiter_id=r.id,
-        title='DevOps Engineer',
-        description='Responsible for CI/CD pipelines and cloud infrastructure.',
-        required_skills='AWS, Kubernetes, Docker, CI/CD, Terraform, Linux',
-        experience_level='Senior Level', salary_min=1200000, salary_max=2000000,
-        employment_type='Full-time', work_mode='On-site',
-        num_openings=1, status='Draft'
-    )
-    db.session.add_all([job1, job2, job3])
+    db.session.add(job)
     db.session.flush()
 
-    candidates = [
-        CandidateProfile(full_name='Arjun Mehta', email='arjun@mail.com', phone='9876543210',
-                         location='Bangalore', skills='Python, Flask, PostgreSQL, Docker, REST API',
-                         experience_years=3, current_role='Software Developer',
-                         education='B.Tech CS - VTU 2021', is_open_to_work=True,
-                         bio='Passionate backend developer with 3 years of Python experience.'),
-        CandidateProfile(full_name='Sneha Patel', email='sneha@mail.com', phone='9123456780',
-                         location='Mumbai', skills='React, TypeScript, JavaScript, CSS, GraphQL',
-                         experience_years=2, current_role='Frontend Developer',
-                         education='B.E. IT - Mumbai University 2022', is_open_to_work=True,
-                         bio='Creative front-end developer building beautiful web interfaces.'),
-        CandidateProfile(full_name='Rohit Kumar', email='rohit@mail.com', phone='9845671230',
-                         location='Pune', skills='AWS, Kubernetes, Docker, Terraform, CI/CD, Python',
-                         experience_years=5, current_role='DevOps Engineer',
-                         education='M.Tech - IIT Pune 2019', is_open_to_work=False,
-                         bio='DevOps expert with 5 years of cloud infrastructure experience.'),
-        CandidateProfile(full_name='Kavitha Nair', email='kavitha@mail.com',
-                         location='Hyderabad', skills='Python, Django, Machine Learning, TensorFlow',
-                         experience_years=4, current_role='ML Engineer',
-                         education='M.Sc Data Science - BITS 2020', is_open_to_work=True,
-                         bio='ML engineer specializing in NLP and computer vision.'),
-        CandidateProfile(full_name='Rahul Singh', email='rahul@mail.com',
-                         location='Bangalore', skills='React, Node.js, MongoDB, Express, JavaScript',
-                         experience_years=1, current_role='Junior Developer',
-                         education='B.Tech - NIT 2023', is_open_to_work=True,
-                         bio='Fresh graduate eager to contribute to impactful products.'),
+    # ── Candidates ────────────────────────────────────────────────────────────
+    candidates_data = [
+        dict(name='Arjun Sharma',   email='arjun@mail.com',   location='Bangalore',
+             skills='Python,Flask,SQL,REST API,Docker', edu='Bachelor in Computer Science', exp=3),
+        dict(name='Priya Nair',     email='priya@mail.com',   location='Mumbai',
+             skills='Python,Django,SQL', edu='Master in Software Engineering', exp=5),
+        dict(name='Ravi Kumar',     email='ravi@mail.com',    location='Bangalore',
+             skills='Java,Spring Boot,SQL', edu='Bachelor in IT', exp=2),
+        dict(name='Sneha Reddy',    email='sneha@mail.com',   location='Hyderabad',
+             skills='Python,Flask,MongoDB', edu='Bachelor in Computer Science', exp=1),
+        dict(name='Karan Mehta',    email='karan@mail.com',   location='Pune',
+             skills='Python,Flask,SQL,REST API', edu='Diploma in CS', exp=2),
     ]
-    db.session.add_all(candidates)
-    db.session.flush()
 
-    apps = [
-        Application(job_id=job1.id, candidate_id=candidates[0].id,
-                    status='Shortlisted', cover_letter='I am very interested in this position.'),
-        Application(job_id=job1.id, candidate_id=candidates[3].id,
-                    status='Applied', cover_letter='My Python + ML background is perfect.'),
-        Application(job_id=job2.id, candidate_id=candidates[1].id,
-                    status='Interview Scheduled', cover_letter='React is my primary stack.'),
-        Application(job_id=job2.id, candidate_id=candidates[4].id,
-                    status='Applied', cover_letter='Looking to grow as a React developer.'),
-        Application(job_id=job1.id, candidate_id=candidates[2].id,
-                    status='Rejected', cover_letter='I have worked on large scale backend systems.'),
-    ]
-    db.session.add_all(apps)
+    for cd in candidates_data:
+        c_user = User(email=cd['email'], role='candidate')
+        c_user.set_password('password123')
+        db.session.add(c_user)
+        db.session.flush()
+
+        candidate = Candidate(
+            user_id   = c_user.id,
+            full_name = cd['name'],
+            email     = cd['email'],
+            location  = cd['location'],
+        )
+        db.session.add(candidate)
+        db.session.flush()
+
+        resume = Resume(
+            candidate_id        = candidate.id,
+            title               = f"{cd['name']} Resume",
+            skills              = cd['skills'],
+            education           = cd['edu'],
+            years_of_experience = cd['exp'],
+            summary             = f"Experienced developer with {cd['exp']} years.",
+            is_primary          = True,
+        )
+        db.session.add(resume)
+        db.session.flush()
+
+        application = Application(
+            job_id       = job.id,
+            candidate_id = candidate.id,
+            resume_id    = resume.id,
+            status       = 'applied',
+        )
+        db.session.add(application)
+
     db.session.commit()
-
-    print("✅ Seed data loaded successfully!")
-    print("   Login: priya@techcorp.com / password123")
+    print("✅ Seed data created successfully!")
+    print(f"   HR login  : hr@techcorp.com / password123")
+    print(f"   Job ID    : {job.id}")
+    print(f"   Test URL  : GET /api/hr/filter/{job.id}")
