@@ -1,9 +1,10 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Jobs from './pages/Jobs';
 import SavedJobs from './pages/SavedJobs';
 import ResumeUpload from './pages/ResumeUpload';
+import CandidateResumes from './components/CandidateResumes';
 import NotificationsPage, { NotificationBell } from './pages/Notifications';
 
 const PrivateRoute = ({ children }) => {
@@ -48,9 +49,7 @@ function Navbar() {
         {navLink('/jobs', 'Jobs')}
         {navLink('/saved-jobs', '♥ Saved')}
         {navLink('/resumes', '📄 Resumes')}
-        {navLink('/notifications', '🔔 Notifications')}
-
-
+        <NotificationBell />
         <button
           onClick={() => { localStorage.clear(); window.location.href = '/'; }}
           style={{
@@ -69,11 +68,12 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/"               element={<Login />} />
-        <Route path="/jobs"           element={<PrivateRoute><Jobs /></PrivateRoute>} />
-        <Route path="/saved-jobs"     element={<PrivateRoute><SavedJobs /></PrivateRoute>} />
-        <Route path="/resumes"        element={<PrivateRoute><ResumeUpload /></PrivateRoute>} />
-        <Route path="/notifications"  element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
+        <Route path="/"                    element={<Login />} />
+        <Route path="/jobs"                element={<PrivateRoute><Jobs /></PrivateRoute>} />
+        <Route path="/saved-jobs"          element={<PrivateRoute><SavedJobs /></PrivateRoute>} />
+        <Route path="/resumes"             element={<PrivateRoute><ResumeUpload /></PrivateRoute>} />
+        <Route path="/candidates/resumes"  element={<PrivateRoute><CandidateResumes /></PrivateRoute>} />
+        <Route path="/notifications"       element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
       </Routes>
     </Router>
   );
