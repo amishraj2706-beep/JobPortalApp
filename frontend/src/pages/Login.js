@@ -110,6 +110,29 @@ body { background: var(--bg); }
   outline: 2px solid rgba(255, 107, 53, 0.2);
   border-color: var(--accent);
 }
+.lg-role {
+  display: inline-flex;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff7ed;
+  margin-bottom: 18px;
+}
+.lg-role button {
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.lg-role button.active {
+  background: var(--accent);
+  color: #fff;
+}
 .lg-actions {
   display: flex;
   gap: 12px;
@@ -162,12 +185,21 @@ function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [role, setRole] = useState('candidate');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await login(username, password);
-            navigate('/candidate-dashboard');
+            localStorage.setItem('user', JSON.stringify({
+                name: username || 'User',
+                role,
+            }));
+            if (role === 'employer') {
+                navigate('/company-dashboard');
+            } else {
+                navigate('/candidate-dashboard');
+            }
         } catch (err) {
             setError('Invalid username or password');
         }
@@ -175,8 +207,15 @@ function Login() {
 
     const handleDemo = () => {
         localStorage.setItem('token', 'demo-token');
-        localStorage.setItem('user', JSON.stringify({ name: 'Demo Candidate', role: 'candidate' }));
-        navigate('/candidate-dashboard');
+        localStorage.setItem('user', JSON.stringify({
+            name: role === 'employer' ? 'Demo Employer' : 'Demo Candidate',
+            role,
+        }));
+        if (role === 'employer') {
+            navigate('/company-dashboard');
+        } else {
+            navigate('/candidate-dashboard');
+        }
     };
 
     return (
@@ -209,15 +248,34 @@ function Login() {
                 </section>
 
                 <section className="lg-panel">
-                    <h2 className="lg-title">Candidate login</h2>
+                    <h2 className="lg-title">{role === 'employer' ? 'Employer login' : 'Candidate login'}</h2>
                     <p className="lg-sub">Use your credentials or jump in with demo access.</p>
+
+                    <div className="lg-role" role="tablist" aria-label="Select login role">
+                        <button
+                            type="button"
+                            className={role === 'candidate' ? 'active' : ''}
+                            onClick={() => setRole('candidate')}
+                            aria-pressed={role === 'candidate'}
+                        >
+                            Candidate
+                        </button>
+                        <button
+                            type="button"
+                            className={role === 'employer' ? 'active' : ''}
+                            onClick={() => setRole('employer')}
+                            aria-pressed={role === 'employer'}
+                        >
+                            Employer
+                        </button>
+                    </div>
 
                     <form onSubmit={handleSubmit}>
                         <div className="lg-field">
-                            <label>Username</label>
+                            <label>Email or username</label>
                             <input
                                 type="text"
-                                placeholder="Username"
+                                placeholder="you@email.com"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
