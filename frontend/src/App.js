@@ -34,12 +34,14 @@ function Navbar() {
       userRole = null;
     }
   }
+
   const hiddenRoutes = new Set([
     '/',
     '/register',
     '/forgot-password',
     '/otp-verification',
     '/reset-password',
+    '/employer/register',
   ]);
   if (hiddenRoutes.has(location.pathname)) return null;
 
@@ -132,89 +134,89 @@ function Navbar() {
           </>
         ) : (
           <>
-        <Link to="/candidate-dashboard" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/candidate-dashboard' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/candidate-dashboard' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/candidate-dashboard' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Dashboard</Link>
+            <Link to="/candidate-dashboard" style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '13px',
+              fontWeight: '700',
+              background: location.pathname === '/candidate-dashboard' ? '#ff6b35' : 'transparent',
+              color: location.pathname === '/candidate-dashboard' ? '#fff' : '#555',
+              border: '1px solid',
+              borderColor: location.pathname === '/candidate-dashboard' ? '#ff6b35' : '#222',
+              transition: 'all .15s'
+            }}>Dashboard</Link>
 
-        <Link to="/candidate-profile" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/candidate-profile' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/candidate-profile' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/candidate-profile' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Profile</Link>
+            <Link to="/candidate-profile" style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '13px',
+              fontWeight: '700',
+              background: location.pathname === '/candidate-profile' ? '#ff6b35' : 'transparent',
+              color: location.pathname === '/candidate-profile' ? '#fff' : '#555',
+              border: '1px solid',
+              borderColor: location.pathname === '/candidate-profile' ? '#ff6b35' : '#222',
+              transition: 'all .15s'
+            }}>Profile</Link>
 
-        <Link to="/jobs" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/jobs' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/jobs' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/jobs' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Jobs</Link>
+            <Link to="/jobs" style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '13px',
+              fontWeight: '700',
+              background: location.pathname === '/jobs' ? '#ff6b35' : 'transparent',
+              color: location.pathname === '/jobs' ? '#fff' : '#555',
+              border: '1px solid',
+              borderColor: location.pathname === '/jobs' ? '#ff6b35' : '#222',
+              transition: 'all .15s'
+            }}>Jobs</Link>
 
-        <Link to="/saved-jobs" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/saved-jobs' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/saved-jobs' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/saved-jobs' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>♥ Saved Jobs</Link>
+            <Link to="/saved-jobs" style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '13px',
+              fontWeight: '700',
+              background: location.pathname === '/saved-jobs' ? '#ff6b35' : 'transparent',
+              color: location.pathname === '/saved-jobs' ? '#fff' : '#555',
+              border: '1px solid',
+              borderColor: location.pathname === '/saved-jobs' ? '#ff6b35' : '#222',
+              transition: 'all .15s'
+            }}>♥ Saved Jobs</Link>
 
-        <Link to="/resumes" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/resumes' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/resumes' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/resumes' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>📄 Resumes</Link>
+            <Link to="/resumes" style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '13px',
+              fontWeight: '700',
+              background: location.pathname === '/resumes' ? '#ff6b35' : 'transparent',
+              color: location.pathname === '/resumes' ? '#fff' : '#555',
+              border: '1px solid',
+              borderColor: location.pathname === '/resumes' ? '#ff6b35' : '#222',
+              transition: 'all .15s'
+            }}>📄 Resumes</Link>
 
-        <Link to="/profile-settings" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/profile-settings' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/profile-settings' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/profile-settings' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Settings</Link>
+            <Link to="/profile-settings" style={{
+              padding: '8px 18px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '13px',
+              fontWeight: '700',
+              background: location.pathname === '/profile-settings' ? '#ff6b35' : 'transparent',
+              color: location.pathname === '/profile-settings' ? '#fff' : '#555',
+              border: '1px solid',
+              borderColor: location.pathname === '/profile-settings' ? '#ff6b35' : '#222',
+              transition: 'all .15s'
+            }}>Settings</Link>
           </>
         )}
 
