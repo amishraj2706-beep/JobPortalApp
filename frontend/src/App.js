@@ -12,6 +12,7 @@ import CompanyDashboard from './pages/CompanyDashboard';
 import EmployerPostJob from './pages/EmployerPostJob';
 import EmployerCandidates from './pages/EmployerCandidates';
 import EmployerProfile from './pages/EmployerProfile';
+import EmployerRegistration from './pages/EmployerRegistration';
 import Jobs from './pages/Jobs';
 import SavedJobs from './pages/SavedJobs';
 import CandidateResumes from './components/CandidateResumes';
@@ -252,6 +253,7 @@ function App() {
         <Route path="/candidate-profile" element={<PrivateRoute><CandidateProfile /></PrivateRoute>} />
         <Route path="/profile-settings" element={<PrivateRoute><ProfileSettings /></PrivateRoute>} />
         <Route path="/company-dashboard" element={<PrivateRoute><CompanyDashboard /></PrivateRoute>} />
+        <Route path="/employer/register" element={<EmployerRegistration />} />
         <Route path="/employer/post-job" element={<PrivateRoute><EmployerPostJob /></PrivateRoute>} />
         <Route path="/employer/candidates" element={<PrivateRoute><EmployerCandidates /></PrivateRoute>} />
         <Route path="/employer/profile" element={<PrivateRoute><EmployerProfile /></PrivateRoute>} />

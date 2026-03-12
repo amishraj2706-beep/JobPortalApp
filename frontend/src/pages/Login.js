@@ -300,7 +300,9 @@ function Login() {
 
                     <div className="lg-links">
                         <Link to="/forgot-password">Forgot password?</Link>
-                        <Link to="/register">Create account</Link>
+                        <Link to={role === 'employer' ? '/employer/register' : '/register'}>
+                            {role === 'employer' ? 'Register company' : 'Create account'}
+                        </Link>
                     </div>
                 </section>
             </div>
