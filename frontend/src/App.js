@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import CandidateRegistration from './pages/CandidateRegistration';
@@ -15,8 +15,9 @@ import EmployerProfile from './pages/EmployerProfile';
 import EmployerRegistration from './pages/EmployerRegistration';
 import Jobs from './pages/Jobs';
 import SavedJobs from './pages/SavedJobs';
-import CandidateResumes from './components/CandidateResumes';
 import ResumeUpload from './pages/ResumeUpload';
+import CandidateResumes from './components/CandidateResumes';
+import NotificationsPage, { NotificationBell } from './pages/Notifications';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -34,14 +35,27 @@ function Navbar() {
       userRole = null;
     }
   }
+
   const hiddenRoutes = new Set([
-    '/',
-    '/register',
-    '/forgot-password',
-    '/otp-verification',
-    '/reset-password',
+    '/', '/register', '/forgot-password', '/otp-verification', '/reset-password',
   ]);
   if (hiddenRoutes.has(location.pathname)) return null;
+
+  const navLink = (to, label) => (
+    <Link to={to} style={{
+      padding: '8px 18px',
+      borderRadius: '8px',
+      textDecoration: 'none',
+      fontFamily: "'Syne', sans-serif",
+      fontSize: '13px',
+      fontWeight: '700',
+      background: location.pathname === to ? '#ff6b35' : 'transparent',
+      color: location.pathname === to ? '#fff' : '#555',
+      border: '1px solid',
+      borderColor: location.pathname === to ? '#ff6b35' : '#222',
+      transition: 'all .15s'
+    }}>{label}</Link>
+  );
 
   return (
     <nav style={{
@@ -53,187 +67,50 @@ function Navbar() {
       justifyContent: 'space-between',
       fontFamily: "'Syne', sans-serif"
     }}>
+      {/* Logo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span style={{
-          width: '10px',
-          height: '10px',
-          background: '#ff6b35',
-          borderRadius: '50%',
-          display: 'inline-block',
-          boxShadow: '0 0 12px #ff6b35'
+          width: '10px', height: '10px', background: '#ff6b35',
+          borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 12px #ff6b35'
         }} />
         <span style={{
-          color: '#fff',
-          fontWeight: '800',
-          fontSize: '16px',
-          textTransform: 'uppercase',
-          letterSpacing: '.05em'
+          color: '#fff', fontWeight: '800', fontSize: '16px',
+          textTransform: 'uppercase', letterSpacing: '.05em'
         }}>JobPortal</span>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px' }}>
+      {/* Nav Links */}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
         {userRole === 'employer' ? (
           <>
-            <Link to="/company-dashboard" style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '13px',
-              fontWeight: '700',
-              background: location.pathname === '/company-dashboard' ? '#ff6b35' : 'transparent',
-              color: location.pathname === '/company-dashboard' ? '#fff' : '#555',
-              border: '1px solid',
-              borderColor: location.pathname === '/company-dashboard' ? '#ff6b35' : '#222',
-              transition: 'all .15s'
-            }}>Dashboard</Link>
-
-            <Link to="/employer/post-job" style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '13px',
-              fontWeight: '700',
-              background: location.pathname === '/employer/post-job' ? '#ff6b35' : 'transparent',
-              color: location.pathname === '/employer/post-job' ? '#fff' : '#555',
-              border: '1px solid',
-              borderColor: location.pathname === '/employer/post-job' ? '#ff6b35' : '#222',
-              transition: 'all .15s'
-            }}>Post Job</Link>
-
-            <Link to="/employer/candidates" style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '13px',
-              fontWeight: '700',
-              background: location.pathname === '/employer/candidates' ? '#ff6b35' : 'transparent',
-              color: location.pathname === '/employer/candidates' ? '#fff' : '#555',
-              border: '1px solid',
-              borderColor: location.pathname === '/employer/candidates' ? '#ff6b35' : '#222',
-              transition: 'all .15s'
-            }}>Candidates</Link>
-
-            <Link to="/employer/profile" style={{
-              padding: '8px 18px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '13px',
-              fontWeight: '700',
-              background: location.pathname === '/employer/profile' ? '#ff6b35' : 'transparent',
-              color: location.pathname === '/employer/profile' ? '#fff' : '#555',
-              border: '1px solid',
-              borderColor: location.pathname === '/employer/profile' ? '#ff6b35' : '#222',
-              transition: 'all .15s'
-            }}>Profile</Link>
+            {navLink('/company-dashboard', 'Dashboard')}
+            {navLink('/employer/post-job', 'Post Job')}
+            {navLink('/employer/candidates', 'Candidates')}
+            {navLink('/employer/profile', 'Profile')}
           </>
         ) : (
           <>
-        <Link to="/candidate-dashboard" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/candidate-dashboard' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/candidate-dashboard' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/candidate-dashboard' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Dashboard</Link>
-
-        <Link to="/candidate-profile" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/candidate-profile' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/candidate-profile' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/candidate-profile' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Profile</Link>
-
-        <Link to="/jobs" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/jobs' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/jobs' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/jobs' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Jobs</Link>
-
-        <Link to="/saved-jobs" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/saved-jobs' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/saved-jobs' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/saved-jobs' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>♥ Saved Jobs</Link>
-
-        <Link to="/resumes" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/resumes' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/resumes' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/resumes' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>📄 Resumes</Link>
-
-        <Link to="/profile-settings" style={{
-          padding: '8px 18px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '13px',
-          fontWeight: '700',
-          background: location.pathname === '/profile-settings' ? '#ff6b35' : 'transparent',
-          color: location.pathname === '/profile-settings' ? '#fff' : '#555',
-          border: '1px solid',
-          borderColor: location.pathname === '/profile-settings' ? '#ff6b35' : '#222',
-          transition: 'all .15s'
-        }}>Settings</Link>
+            {navLink('/candidate-dashboard', 'Dashboard')}
+            {navLink('/candidate-profile', 'Profile')}
+            {navLink('/jobs', 'Jobs')}
+            {navLink('/saved-jobs', '♥ Saved')}
+            {navLink('/resumes', '📄 Resumes')}
+            {navLink('/profile-settings', 'Settings')}
           </>
         )}
 
+        {/* Notification Bell */}
+        <NotificationBell />
+
+        {/* Logout */}
         <button
           onClick={() => { localStorage.clear(); window.location.href = '/'; }}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
-            border: '1px solid #222',
-            background: 'transparent',
-            color: '#555',
-            cursor: 'pointer',
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '13px',
-            fontWeight: '700'
+            padding: '8px 18px', borderRadius: '8px', border: '1px solid #222',
+            background: 'transparent', color: '#555', cursor: 'pointer',
+            fontFamily: "'Syne', sans-serif", fontSize: '13px', fontWeight: '700'
           }}
-        >
-          Logout
-        </button>
+        >Logout</button>
       </div>
     </nav>
   );
@@ -244,23 +121,24 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<CandidateRegistration />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/otp-verification" element={<OtpVerification />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/candidate-dashboard" element={<PrivateRoute><CandidateDashboard /></PrivateRoute>} />
-        <Route path="/candidate-profile" element={<PrivateRoute><CandidateProfile /></PrivateRoute>} />
-        <Route path="/profile-settings" element={<PrivateRoute><ProfileSettings /></PrivateRoute>} />
-        <Route path="/company-dashboard" element={<PrivateRoute><CompanyDashboard /></PrivateRoute>} />
-        <Route path="/employer/register" element={<EmployerRegistration />} />
-        <Route path="/employer/post-job" element={<PrivateRoute><EmployerPostJob /></PrivateRoute>} />
-        <Route path="/employer/candidates" element={<PrivateRoute><EmployerCandidates /></PrivateRoute>} />
-        <Route path="/employer/profile" element={<PrivateRoute><EmployerProfile /></PrivateRoute>} />
-        <Route path="/jobs" element={<PrivateRoute><Jobs /></PrivateRoute>} />
-        <Route path="/saved-jobs" element={<PrivateRoute><SavedJobs /></PrivateRoute>} />
-        <Route path="/candidates/resumes" element={<CandidateResumes />} />
-        <Route path="/resumes" element={<PrivateRoute><ResumeUpload /></PrivateRoute>} />
+        <Route path="/"                       element={<Login />} />
+        <Route path="/register"               element={<CandidateRegistration />} />
+        <Route path="/forgot-password"        element={<ForgotPassword />} />
+        <Route path="/otp-verification"       element={<OtpVerification />} />
+        <Route path="/reset-password"         element={<ResetPassword />} />
+        <Route path="/candidate-dashboard"    element={<PrivateRoute><CandidateDashboard /></PrivateRoute>} />
+        <Route path="/candidate-profile"      element={<PrivateRoute><CandidateProfile /></PrivateRoute>} />
+        <Route path="/profile-settings"       element={<PrivateRoute><ProfileSettings /></PrivateRoute>} />
+        <Route path="/company-dashboard"      element={<PrivateRoute><CompanyDashboard /></PrivateRoute>} />
+        <Route path="/employer/register"      element={<EmployerRegistration />} />
+        <Route path="/employer/post-job"      element={<PrivateRoute><EmployerPostJob /></PrivateRoute>} />
+        <Route path="/employer/candidates"    element={<PrivateRoute><EmployerCandidates /></PrivateRoute>} />
+        <Route path="/employer/profile"       element={<PrivateRoute><EmployerProfile /></PrivateRoute>} />
+        <Route path="/jobs"                   element={<PrivateRoute><Jobs /></PrivateRoute>} />
+        <Route path="/saved-jobs"             element={<PrivateRoute><SavedJobs /></PrivateRoute>} />
+        <Route path="/resumes"                element={<PrivateRoute><ResumeUpload /></PrivateRoute>} />
+        <Route path="/candidates/resumes"     element={<PrivateRoute><CandidateResumes /></PrivateRoute>} />
+        <Route path="/notifications"          element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
       </Routes>
     </Router>
   );
