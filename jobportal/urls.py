@@ -19,10 +19,13 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('candidates.urls')),        
+    path('api/', include('candidates.urls')),
     path('api/saved-jobs/', include('saved_jobs.urls')),
     path('api/jobs/', include('jobs.urls')),
     path('api/resumes/', include('resumes.urls')),
+    path('api/', include('notifications.urls')),
+    path('api/users/', include('users.urls')),
+    path('messaging/', include('messaging.urls')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc-ui'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

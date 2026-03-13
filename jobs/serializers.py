@@ -17,12 +17,13 @@ class JobSerializer(serializers.ModelSerializer):
     def get_skills(self, obj):
         return list(obj.jobskill_set.values_list('skill__name', flat=True))
 
+
 class SuggestedJobSerializer(serializers.ModelSerializer):
-    company_name    = serializers.CharField(source='company.name', read_only=True)
-    skills          = serializers.SerializerMethodField()
-    match_score     = serializers.SerializerMethodField()
-    match_reasons   = serializers.SerializerMethodField()
-    matched_skills  = serializers.SerializerMethodField()
+    company_name   = serializers.CharField(source='company.name', read_only=True)
+    skills         = serializers.SerializerMethodField()
+    match_score    = serializers.SerializerMethodField()
+    match_reasons  = serializers.SerializerMethodField()
+    matched_skills = serializers.SerializerMethodField()
 
     class Meta:
         model = Job

@@ -15,8 +15,9 @@ import EmployerProfile from './pages/EmployerProfile';
 import EmployerRegistration from './pages/EmployerRegistration';
 import Jobs from './pages/Jobs';
 import SavedJobs from './pages/SavedJobs';
-import CandidateResumes from './components/CandidateResumes';
 import ResumeUpload from './pages/ResumeUpload';
+import CandidateResumes from './components/CandidateResumes';
+import NotificationsPage, { NotificationBell } from './pages/Notifications';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -55,21 +56,15 @@ function Navbar() {
       justifyContent: 'space-between',
       fontFamily: "'Syne', sans-serif"
     }}>
+      {/* Logo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span style={{
-          width: '10px',
-          height: '10px',
-          background: '#ff6b35',
-          borderRadius: '50%',
-          display: 'inline-block',
-          boxShadow: '0 0 12px #ff6b35'
+          width: '10px', height: '10px', background: '#ff6b35',
+          borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 12px #ff6b35'
         }} />
         <span style={{
-          color: '#fff',
-          fontWeight: '800',
-          fontSize: '16px',
-          textTransform: 'uppercase',
-          letterSpacing: '.05em'
+          color: '#fff', fontWeight: '800', fontSize: '16px',
+          textTransform: 'uppercase', letterSpacing: '.05em'
         }}>JobPortal</span>
       </div>
 
@@ -220,22 +215,15 @@ function Navbar() {
           </>
         )}
 
+        {/* Logout */}
         <button
           onClick={() => { localStorage.clear(); window.location.href = '/'; }}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
-            border: '1px solid #222',
-            background: 'transparent',
-            color: '#555',
-            cursor: 'pointer',
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '13px',
-            fontWeight: '700'
+            padding: '8px 18px', borderRadius: '8px', border: '1px solid #222',
+            background: 'transparent', color: '#555', cursor: 'pointer',
+            fontFamily: "'Syne', sans-serif", fontSize: '13px', fontWeight: '700'
           }}
-        >
-          Logout
-        </button>
+        >Logout</button>
       </div>
     </nav>
   );
