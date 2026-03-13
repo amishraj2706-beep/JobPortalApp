@@ -103,7 +103,7 @@ class ConversationTests(MessagingAPITestCase):
         }
         
         response = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -125,7 +125,7 @@ class ConversationTests(MessagingAPITestCase):
         }
         
         response = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -139,7 +139,7 @@ class ConversationTests(MessagingAPITestCase):
         """Test that candidates can list their conversations"""
         self.client.login(username='candidate1', password='testpass123')
         
-        response = self.client.get('/api/messaging/conversations/')
+        response = self.client.get('/messaging/conversations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -152,7 +152,7 @@ class ConversationTests(MessagingAPITestCase):
         """Test that employers can list their conversations"""
         self.client.login(username='employer1', password='testpass123')
         
-        response = self.client.get('/api/messaging/conversations/')
+        response = self.client.get('/messaging/conversations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -165,7 +165,7 @@ class ConversationTests(MessagingAPITestCase):
         """Test that users cannot see conversations they're not part of"""
         self.client.login(username='candidate2', password='testpass123')
         
-        response = self.client.get('/api/messaging/conversations/')
+        response = self.client.get('/messaging/conversations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -174,7 +174,7 @@ class ConversationTests(MessagingAPITestCase):
         
     def test_unauthenticated_cannot_access_conversations(self):
         """Test that unauthenticated users cannot access conversations"""
-        response = self.client.get('/api/messaging/conversations/')
+        response = self.client.get('/messaging/conversations/')
         
         self.assertEqual(response.status_code, 302)  # Redirect to login
 
@@ -186,7 +186,7 @@ class MessageTests(MessagingAPITestCase):
         
         data = {'content': 'When can we schedule an interview?'}
         response = self.client.post(
-            f'/api/messaging/conversations/{self.conversation.id}/send/',
+            f'/messaging/conversations/{self.conversation.id}/send/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -204,7 +204,7 @@ class MessageTests(MessagingAPITestCase):
         
         data = {'content': 'I should not be able to send this'}
         response = self.client.post(
-            f'/api/messaging/conversations/{self.conversation.id}/send/',
+            f'/messaging/conversations/{self.conversation.id}/send/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -217,14 +217,18 @@ class MessageTests(MessagingAPITestCase):
         """Test that participants can list conversation messages"""
         self.client.login(username='candidate1', password='testpass123')
         
-        response = self.client.get(f'/api/messaging/conversations/{self.conversation.id}/messages/')
+        response = self.client.get(f'/messaging/conversations/{self.conversation.id}/messages/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertTrue(response_data['success'])
-        self.assertEqual(len(response_data['data']), 2)
-        self.assertEqual(response_data['data'][0]['content'], 'Hello, I am interested in the position.')
-        self.assertEqual(response_data['data'][1]['content'], 'Great! Let me review your application.')
+        # Handle both old format (direct array) and new format (paginated)
+        messages = response_data['data']
+        if isinstance(messages, dict) and 'messages' in messages:
+            messages = messages['messages']
+        self.assertEqual(len(messages), 2)
+        self.assertEqual(messages[0]['content'], 'Hello, I am interested in the position.')
+        self.assertEqual(messages[1]['content'], 'Great! Let me review your application.')
         
     def test_messages_are_ordered_chronologically(self):
         """Test that messages are returned in chronological order"""
@@ -236,15 +240,19 @@ class MessageTests(MessagingAPITestCase):
         )
         
         self.client.login(username='candidate1', password='testpass123')
-        response = self.client.get(f'/api/messaging/conversations/{self.conversation.id}/messages/')
+        response = self.client.get(f'/messaging/conversations/{self.conversation.id}/messages/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
         self.assertTrue(response_data['success'])
-        self.assertEqual(len(response_data['data']), 3)
-        self.assertEqual(response_data['data'][0]['content'], 'Hello, I am interested in the position.')
-        self.assertEqual(response_data['data'][1]['content'], 'Great! Let me review your application.')
-        self.assertEqual(response_data['data'][2]['content'], 'Thank you for your response.')
+        # Handle both old format (direct array) and new format (paginated)
+        messages = response_data['data']
+        if isinstance(messages, dict) and 'messages' in messages:
+            messages = messages['messages']
+        self.assertEqual(len(messages), 3)
+        self.assertEqual(messages[0]['content'], 'Hello, I am interested in the position.')
+        self.assertEqual(messages[1]['content'], 'Great! Let me review your application.')
+        self.assertEqual(messages[2]['content'], 'Thank you for your response.')
         
     def test_unread_message_count(self):
         """Test that unread message count is calculated correctly"""
@@ -254,7 +262,7 @@ class MessageTests(MessagingAPITestCase):
         self.message1.is_read = True
         self.message1.save()
         
-        response = self.client.get('/api/messaging/conversations/')
+        response = self.client.get('/messaging/conversations/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -267,7 +275,7 @@ class PrivacyTests(MessagingAPITestCase):
         """Test that contact information is hidden from non-owners"""
         self.client.login(username='employer1', password='testpass123')
         
-        response = self.client.get(f'/api/messaging/conversations/{self.conversation.id}/participants/')
+        response = self.client.get(f'/messaging/conversations/{self.conversation.id}/participants/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -282,7 +290,7 @@ class PrivacyTests(MessagingAPITestCase):
         """Test that contact information is visible to owner"""
         self.client.login(username='candidate1', password='testpass123')
         
-        response = self.client.get(f'/api/messaging/conversations/{self.conversation.id}/participants/')
+        response = self.client.get(f'/messaging/conversations/{self.conversation.id}/participants/')
         
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.content)
@@ -297,7 +305,7 @@ class PrivacyTests(MessagingAPITestCase):
         """Test that non-participants cannot access participant info"""
         self.client.login(username='candidate2', password='testpass123')
         
-        response = self.client.get(f'/api/messaging/conversations/{self.conversation.id}/participants/')
+        response = self.client.get(f'/messaging/conversations/{self.conversation.id}/participants/')
         
         self.assertEqual(response.status_code, 403)
         response_data = json.loads(response.content)
@@ -313,7 +321,7 @@ class MessageReadTests(MessagingAPITestCase):
         self.assertFalse(self.message2.is_read)
         
         response = self.client.post(
-            f'/api/messaging/conversations/{self.conversation.id}/mark-read/',
+            f'/messaging/conversations/{self.conversation.id}/mark-read/',
             data=json.dumps({}),
             content_type='application/json'
         )
@@ -332,7 +340,7 @@ class MessageReadTests(MessagingAPITestCase):
         self.client.login(username='candidate2', password='testpass123')
         
         response = self.client.post(
-            f'/api/messaging/conversations/{self.conversation.id}/mark-read/',
+            f'/messaging/conversations/{self.conversation.id}/mark-read/',
             data=json.dumps({}),
             content_type='application/json'
         )
@@ -353,7 +361,7 @@ class EdgeCaseTests(MessagingAPITestCase):
         }
         
         response = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -369,7 +377,7 @@ class EdgeCaseTests(MessagingAPITestCase):
         data = {'candidate_id': self.candidate_profile.id}  # Missing employer_id
         
         response = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -388,7 +396,7 @@ class EdgeCaseTests(MessagingAPITestCase):
         }
         
         response = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -430,7 +438,7 @@ class EdgeCaseTests(MessagingAPITestCase):
         
         # First request should create the conversation
         response1 = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -438,7 +446,7 @@ class EdgeCaseTests(MessagingAPITestCase):
         
         # Second request should return existing conversation
         response2 = self.client.post(
-            '/api/messaging/conversations/create/',
+            '/messaging/conversations/create/',
             data=json.dumps(data),
             content_type='application/json'
         )
@@ -450,7 +458,7 @@ class EdgeCaseTests(MessagingAPITestCase):
         
         data = {'content': ''}
         response = self.client.post(
-            f'/api/messaging/conversations/{self.conversation.id}/send/',
+            f'/messaging/conversations/{self.conversation.id}/send/',
             data=json.dumps(data),
             content_type='application/json'
         )

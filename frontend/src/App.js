@@ -1,6 +1,18 @@
 ﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
+import CandidateRegistration from './pages/CandidateRegistration';
+import ForgotPassword from './pages/ForgotPassword';
+import OtpVerification from './pages/OtpVerification';
+import ResetPassword from './pages/ResetPassword';
+import CandidateDashboard from './pages/CandidateDashboard';
+import CandidateProfile from './pages/CandidateProfile';
+import ProfileSettings from './pages/ProfileSettings';
+import CompanyDashboard from './pages/CompanyDashboard';
+import EmployerPostJob from './pages/EmployerPostJob';
+import EmployerCandidates from './pages/EmployerCandidates';
+import EmployerProfile from './pages/EmployerProfile';
+import EmployerRegistration from './pages/EmployerRegistration';
 import Jobs from './pages/Jobs';
 import SavedJobs from './pages/SavedJobs';
 import ResumeUpload from './pages/ResumeUpload';
@@ -14,7 +26,20 @@ const PrivateRoute = ({ children }) => {
 
 function Navbar() {
   const location = useLocation();
-  if (location.pathname === '/') return null;
+  const storedUser = localStorage.getItem('user');
+  let userRole = null;
+  if (storedUser) {
+    try {
+      userRole = JSON.parse(storedUser).role || null;
+    } catch (err) {
+      userRole = null;
+    }
+  }
+
+  const hiddenRoutes = new Set([
+    '/', '/register', '/forgot-password', '/otp-verification', '/reset-password',
+  ]);
+  if (hiddenRoutes.has(location.pathname)) return null;
 
   const navLink = (to, label) => (
     <Link to={to} style={{
@@ -45,27 +70,34 @@ function Navbar() {
       {/* Logo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <span style={{
-          width: '10px',
-          height: '10px',
-          background: '#ff6b35',
-          borderRadius: '50%',
-          display: 'inline-block',
-          boxShadow: '0 0 12px #ff6b35'
+          width: '10px', height: '10px', background: '#ff6b35',
+          borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 12px #ff6b35'
         }} />
         <span style={{
-          color: '#fff',
-          fontWeight: '800',
-          fontSize: '16px',
-          textTransform: 'uppercase',
-          letterSpacing: '.05em'
+          color: '#fff', fontWeight: '800', fontSize: '16px',
+          textTransform: 'uppercase', letterSpacing: '.05em'
         }}>JobPortal</span>
       </div>
 
       {/* Nav Links */}
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-        {navLink('/jobs', 'Jobs')}
-        {navLink('/saved-jobs', '♥ Saved')}
-        {navLink('/resumes', '📄 Resumes')}
+        {userRole === 'employer' ? (
+          <>
+            {navLink('/company-dashboard', 'Dashboard')}
+            {navLink('/employer/post-job', 'Post Job')}
+            {navLink('/employer/candidates', 'Candidates')}
+            {navLink('/employer/profile', 'Profile')}
+          </>
+        ) : (
+          <>
+            {navLink('/candidate-dashboard', 'Dashboard')}
+            {navLink('/candidate-profile', 'Profile')}
+            {navLink('/jobs', 'Jobs')}
+            {navLink('/saved-jobs', '♥ Saved')}
+            {navLink('/resumes', '📄 Resumes')}
+            {navLink('/profile-settings', 'Settings')}
+          </>
+        )}
 
         {/* Notification Bell */}
         <NotificationBell />
@@ -74,15 +106,9 @@ function Navbar() {
         <button
           onClick={() => { localStorage.clear(); window.location.href = '/'; }}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
-            border: '1px solid #222',
-            background: 'transparent',
-            color: '#555',
-            cursor: 'pointer',
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '13px',
-            fontWeight: '700'
+            padding: '8px 18px', borderRadius: '8px', border: '1px solid #222',
+            background: 'transparent', color: '#555', cursor: 'pointer',
+            fontFamily: "'Syne', sans-serif", fontSize: '13px', fontWeight: '700'
           }}
         >Logout</button>
       </div>
@@ -95,12 +121,24 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/"                   element={<Login />} />
-        <Route path="/jobs"               element={<PrivateRoute><Jobs /></PrivateRoute>} />
-        <Route path="/saved-jobs"         element={<PrivateRoute><SavedJobs /></PrivateRoute>} />
-        <Route path="/resumes"            element={<PrivateRoute><ResumeUpload /></PrivateRoute>} />
-        <Route path="/candidates/resumes" element={<PrivateRoute><CandidateResumes /></PrivateRoute>} />
-        <Route path="/notifications"      element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
+        <Route path="/"                       element={<Login />} />
+        <Route path="/register"               element={<CandidateRegistration />} />
+        <Route path="/forgot-password"        element={<ForgotPassword />} />
+        <Route path="/otp-verification"       element={<OtpVerification />} />
+        <Route path="/reset-password"         element={<ResetPassword />} />
+        <Route path="/candidate-dashboard"    element={<PrivateRoute><CandidateDashboard /></PrivateRoute>} />
+        <Route path="/candidate-profile"      element={<PrivateRoute><CandidateProfile /></PrivateRoute>} />
+        <Route path="/profile-settings"       element={<PrivateRoute><ProfileSettings /></PrivateRoute>} />
+        <Route path="/company-dashboard"      element={<PrivateRoute><CompanyDashboard /></PrivateRoute>} />
+        <Route path="/employer/register"      element={<EmployerRegistration />} />
+        <Route path="/employer/post-job"      element={<PrivateRoute><EmployerPostJob /></PrivateRoute>} />
+        <Route path="/employer/candidates"    element={<PrivateRoute><EmployerCandidates /></PrivateRoute>} />
+        <Route path="/employer/profile"       element={<PrivateRoute><EmployerProfile /></PrivateRoute>} />
+        <Route path="/jobs"                   element={<PrivateRoute><Jobs /></PrivateRoute>} />
+        <Route path="/saved-jobs"             element={<PrivateRoute><SavedJobs /></PrivateRoute>} />
+        <Route path="/resumes"                element={<PrivateRoute><ResumeUpload /></PrivateRoute>} />
+        <Route path="/candidates/resumes"     element={<PrivateRoute><CandidateResumes /></PrivateRoute>} />
+        <Route path="/notifications"          element={<PrivateRoute><NotificationsPage /></PrivateRoute>} />
       </Routes>
     </Router>
   );

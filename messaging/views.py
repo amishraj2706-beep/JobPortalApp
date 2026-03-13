@@ -235,17 +235,38 @@ def send_message(request, conversation_id):
 @login_required
 def list_messages(request, conversation_id):
     """
-    List all messages in a conversation
+    List all messages in a conversation with pagination
     """
     conversation = get_object_or_404(Conversation, id=conversation_id)
     
     if not _can_access_conversation(request.user, conversation):
         return _json_error("Access denied.", status=403)
     
-    messages = conversation.messages.order_by('created_at')
-    messages_data = [_serialize_message(msg) for msg in messages]
+    # Pagination parameters
+    page = int(request.GET.get('page', 1))
+    page_size = min(int(request.GET.get('page_size', 50)), 100)  # Max 100 messages per page
     
-    return _json_success(data=messages_data)
+    # Get messages with pagination
+    messages = conversation.messages.order_by('created_at')
+    total_count = messages.count()
+    
+    start_index = (page - 1) * page_size
+    end_index = start_index + page_size
+    messages_page = messages[start_index:end_index]
+    
+    messages_data = [_serialize_message(msg) for msg in messages_page]
+    
+    return _json_success(data={
+        'messages': messages_data,
+        'pagination': {
+            'page': page,
+            'page_size': page_size,
+            'total_count': total_count,
+            'total_pages': (total_count + page_size - 1) // page_size,
+            'has_next': end_index < total_count,
+            'has_previous': page > 1
+        }
+    })
 
 
 @csrf_exempt
